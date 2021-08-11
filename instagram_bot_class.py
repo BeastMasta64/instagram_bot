@@ -1,15 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.firefox.options import Options
-
-# from direct_users_list import direct_users_list
 from time import sleep
-import random
 from selenium.common.exceptions import NoSuchElementException
-import requests
-import os
-import emoji
-from config import CHROMEDRIVER_PATH, USERNAME_MART, PASSWORD_MART
+from config import CHROMEDRIVER_PATH
 
 
 class InstagramBot():
@@ -19,6 +12,8 @@ class InstagramBot():
         self.username = username
         self.password = password
 
+        # все эти опции необходимы для качественной работы браузера,
+        # опция headless включает режим без отображения окна браузера
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36"
         self.options = webdriver.ChromeOptions()
         self.options.headless = True
@@ -33,8 +28,8 @@ class InstagramBot():
         self.options.add_argument('--disable-gpu')
         self.options.add_argument('--disable-dev-shm-usage')
         self.options.add_argument('--no-sandbox')
-        self.browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=self.options)
 
+        self.browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=self.options)
 
     # метод для закрытия браузера
     def close_browser(self):
@@ -47,20 +42,27 @@ class InstagramBot():
 
         browser = self.browser
         browser.get('https://www.instagram.com')
-        sleep(random.randrange(3, 5))
+
+        sleep(3)
 
         username_input = browser.find_element_by_name('username')
         username_input.clear()
+
+        sleep(1)
+
         username_input.send_keys(self.username)
 
         sleep(2)
 
         password_input = browser.find_element_by_name('password')
         password_input.clear()
-        password_input.send_keys(self.password)
 
+        sleep(1)
+        password_input.send_keys(self.password)
+        sleep(1)
         password_input.send_keys(Keys.ENTER)
-        sleep(5)
+
+        sleep(4)
 
     # функция проверки упоминания в истории
     def check_mentions(self):
@@ -159,6 +161,7 @@ class InstagramBot():
 
         browser = self.browser
 
+        result = True
         nicknames_list = []
         f = open('nicknames.txt', 'r')
         for nickname in f:
@@ -174,9 +177,7 @@ class InstagramBot():
                 # Заходим в общие
                 browser.get('https://www.instagram.com/direct/inbox/general/')
 
-            sleep(3)
-            browser.refresh()
-            sleep(5)
+            sleep(4)
 
             # Нажимаем кнопку не сейчас
             try:
@@ -196,6 +197,7 @@ class InstagramBot():
                 print(f'\nПроверяю {i} клиента.')
 
                 dm_field = browser.find_element_by_xpath(
+
                     '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div')
 
                 # на 11 пользователя бот почему-то нажать не может,
@@ -237,29 +239,17 @@ class InstagramBot():
                         '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/button')
                     send_button.click()
                     nicknames_list.append(user_nickname)
-                    print(f'добавил юзера {user_nickname}')
+                    print(f'добавил юзера {user_nickname} с номерком {len(nicknames_list)}')
                 else:
                     print(f'{user_nickname} - ему не надо')
                 sleep(2)
+
         except:
             print('Что-то не так...')
+            result = False
         f = open('nicknames.txt', 'w')
         for nickname in nicknames_list:
             f.write(nickname + '\n')
         f.close()
-        print('Проверка завершена')
-
-
-my_bot = InstagramBot(USERNAME_MART, PASSWORD_MART)
-my_bot.login()
-my_bot.check_requests()
-my_bot.check_dms(30, 1)
-# my_bot.close_browser()
-
-
-# my_bot.check_dms(5, 2)
-
-# my_bot.check_dms(10, 1)
-# my_bot.gavno()
-
-# my_bot.send_direct_message('kryakrya64', 'working!')
+        print('\nПроверка завершена')
+        return result

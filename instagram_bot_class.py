@@ -152,6 +152,7 @@ class InstagramBot():
                     sleep(2)
                     main_button = '/html/body/div[6]/div/div/div/div[2]/button[1]'
                     browser.find_element_by_xpath(main_button).click()
+                    print('Добавил запрос в основные\n')
                     sleep(2)
                     break
 
@@ -244,9 +245,14 @@ class InstagramBot():
                     print(f'{user_nickname} - ему не надо')
                 sleep(2)
 
+        except Exception as exception:
+            print('Поймал Exception'
+                  f'Ошибка: {exception}')
+            result = False
         except:
             print('Что-то не так...')
             result = False
+
         f = open('nicknames.txt', 'w')
         for nickname in nicknames_list:
             f.write(nickname + '\n')

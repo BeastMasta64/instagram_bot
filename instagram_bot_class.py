@@ -16,7 +16,7 @@ class InstagramBot():
         # опция headless включает режим без отображения окна браузера
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36"
         self.options = webdriver.ChromeOptions()
-        self.options.headless = True
+        # self.options.headless = True
         self.options.add_argument(f'user-agent={user_agent}')
         self.options.add_argument("--window-size=1920,1080")
         self.options.add_argument('--ignore-certificate-errors')
@@ -70,8 +70,9 @@ class InstagramBot():
         browser = self.browser
 
         # находим все сообщения пользователя
+
         messages = browser.find_elements_by_xpath(
-            '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div/div/div')
+            '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div/div/div')
         # цикл по сообщениям пользователя
         for message in messages:
             try:
@@ -141,6 +142,7 @@ class InstagramBot():
                 # Заходим в переписку к пользователю
                 person = f'/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div[{i}]'
                 browser.find_element_by_xpath(person).click()
+                print(f'Проверяю {i} пользователя в запросах')
                 sleep(2)
 
                 if self.check_mentions():
@@ -183,7 +185,7 @@ class InstagramBot():
             # Нажимаем кнопку не сейчас
             try:
                 not_now_button = browser.find_element_by_xpath(
-                    '//*[contains(text(), "Не сейчас")]')
+                    '//*[contains(text(), "Not Now")]')
                 not_now_button.click()
             except NoSuchElementException:
                 pass
@@ -199,7 +201,7 @@ class InstagramBot():
 
                 dm_field = browser.find_element_by_xpath(
 
-                    '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div')
+                    '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[1]/div[3]/div/div/div')
 
                 # на 11 пользователя бот почему-то нажать не может,
                 # прокрутим страницу вниз хотя бы на 1 пиксель - это помогает
@@ -218,26 +220,26 @@ class InstagramBot():
 
                 # переменная под всех пользователей, которых видит бот
                 users = browser.find_elements_by_xpath(
-                    '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div')
+                    '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div')
 
                 # выбираем i-того пользователя
                 users[i - 1].click()
                 sleep(2)
 
                 # смотрим имя пользователя
-                nickname_window = '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[1]/div/div' \
-                                  '/div[2]/div/div[2]/button/div/div[1]/div'
+                nickname_window = '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[2]' \
+                                  '/div[1]/div/div/div[2]/div/div[2]/button/div/div/div'
                 user_nickname = browser.find_element_by_xpath(nickname_window).text
 
                 # Проверка на упоминание
                 if self.check_mentions() and user_nickname not in nicknames_list:
                     text_box = browser.find_element_by_xpath(
-                        '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[2]/textarea')
+                        '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[2]/textarea')
                     text_box.clear()
                     text_box.send_keys(f'Ваш номерок {len(nicknames_list) + 1}!\n'
                                        f'Удачи:)')
                     send_button = browser.find_element_by_xpath(
-                        '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/button')
+                        '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/button')
                     send_button.click()
                     nicknames_list.append(user_nickname)
                     print(f'добавил юзера {user_nickname} с номерком {len(nicknames_list)}')
@@ -246,7 +248,7 @@ class InstagramBot():
                 sleep(2)
 
         except Exception as exception:
-            print('Поймал Exception'
+            print('Поймал Exception\n'
                   f'Ошибка: {exception}')
             result = False
         except:

@@ -6,10 +6,10 @@ bot = InstagramBot(USERNAME_MART, PASSWORD_MART)
 # выполняем вход в инстаграм
 bot.login()
 # проверяем запросы от новых пользователей
-bot.check_requests()
+# bot.check_requests()
 # проверяем папку основные
-bot.check_dms(60, 1)
+bot.check_dms(20, 1)
 # проверяем папку общее
-# bot.check_dms(15, 1)
+# bot.check_dms(5, 2)
 # закрываем браузер
-bot.close_browser()
+# bot.close_browser()

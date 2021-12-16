@@ -6,7 +6,7 @@ from sqlalchemy import insert
 from sqlalchemy.orm import session
 
 from config import CHROMEDRIVER_PATH
-from just_py import TestNicknameModel
+from models import TestNicknameModel
 
 
 class InstagramBot():
@@ -19,7 +19,7 @@ class InstagramBot():
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36"
         self.options = webdriver.ChromeOptions()
         # опция headless включает режим без отображения окна браузера
-        # self.options.headless = True
+        self.options.headless = True
         self.options.add_argument(f'user-agent={user_agent}')
         self.options.add_argument("--window-size=1920,1080")
         self.options.add_argument('--ignore-certificate-errors')
@@ -61,12 +61,13 @@ class InstagramBot():
     def check_mentions(self):
         # находим все сообщения пользователя
         messages = self.browser.find_elements_by_xpath(
-            '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div/div/div')
+            '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div/div/div'
+        )
         # цикл по сообщениям пользователя
         for message in messages:
             try:
                 # есть ли упоминание в сообщении
-                message.find_element_by_xpath('.//h1[contains(text(), "Упомянул(-а) вас в своей истории")]')
+                message.find_element_by_xpath('.//h1[contains(text(), "Mentioned you in their story")]')
                 # есть элеменент-картинка в сообщении
                 message.find_element_by_xpath('.//button/div/div/div/img')
                 return True
@@ -74,25 +75,10 @@ class InstagramBot():
                 continue
         return False
 
-    def refreshik(self):
-        browser = self.browser
-        browser.get('https://www.instagram.com/direct/inbox/')
-        sleep(3)
-
-        # Нажимаем кнопку не сейчас
-        try:
-            not_now_button = browser.find_element_by_xpath(
-                '//*[contains(text(), "Не сейчас")]')
-            not_now_button.click()
-        except NoSuchElementException:
-            pass
-        sleep(2)
-        browser.refresh()
-
     def click_not_now_button(self):
         try:
             not_now_button = self.browser.find_element_by_xpath(
-                '//*[contains(text(), "Не сейчас")]')
+                '//*[contains(text(), "Not Now")]')
             not_now_button.click()
         except NoSuchElementException:
             pass
@@ -132,11 +118,11 @@ class InstagramBot():
             '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div'
         )
 
-        for i in range(1, len(request_list) + 1):
+        for user_index in range(1, len(request_list) + 1):
             # Заходим в переписку к пользователю
-            person = f'/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div[{i}]'
+            person = f'/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div[{user_index}]'
             self.browser.find_element_by_xpath(person).click()
-            print(f'Проверяю {i} пользователя в запросах')
+            print(f'Проверяю {user_index} пользователя в запросах')
             sleep(2)
 
             if self.check_mentions():
@@ -144,8 +130,7 @@ class InstagramBot():
         return False
 
     def accept_request(self):
-        accept_button = '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/' \
-                        'div/div[2]/div[5]/button'
+        accept_button = '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[5]/button'
         self.browser.find_element_by_xpath(accept_button).click()
         sleep(2)
         main_button = '/html/body/div[6]/div/div/div/div[2]/button[1]'
@@ -177,15 +162,16 @@ class InstagramBot():
 
             # переменная под всех пользователей, которых видит бот
             users = self.browser.find_elements_by_xpath(
-                '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div')
+                '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div'
+            )
             # выбираем i-того пользователя
             users[user_index - 1].click()
             sleep(2)
 
             # смотрим имя пользователя
             user_nickname = self.browser.find_element_by_xpath(
-                '/html/body/div[1]/div/div/section/div/div[2]/div/div'
-                '/div[2]/div[1]/div/div/div[2]/div/div[2]/button/div/div/div'
+                '/html/body/div[1]/section/div/div[2]/div'
+                '/div/div[2]/div[1]/div/div/div[2]/div/div[2]/button/div/div/div'
             ).text
 
             self.process_user(user_nickname=user_nickname)
@@ -195,8 +181,8 @@ class InstagramBot():
         # Проверка на упоминание
         if self.check_mentions() and not self.check_if_user_exists_in_db(nickname=user_nickname):
             try:
-                id = self.insert_nickname_in_db_return_id(nickname=user_nickname)
-                self.send_customer_his_nomerok(nomerok=id)
+                db_user_id = self.insert_nickname_in_db_return_id(nickname=user_nickname)
+                self.send_customer_his_nomerok(nomerok=db_user_id)
                 self.session.commit()
             except Exception as e:
                 print(f'While processing user {user_nickname} caught an exception:\n'
@@ -204,15 +190,15 @@ class InstagramBot():
                       f'Rolling back the session')
                 self.session.rollback()
                 raise e
-            print(f'добавил юзера {user_nickname} с номерком {id}')
+            print(f'добавил юзера {user_nickname} с номерком {db_user_id}')
         else:
             print(f'{user_nickname} - ему не надо')
 
     def scroll_dm_field_to_user(self, user_index: int):
         # поле сообщений
         dm_field = self.browser.find_element_by_xpath(
-
-            '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[1]/div[3]/div/div/div')
+            '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div'
+        )
 
         # первый пользователь прогружается через 7 пикселя, остальные - каждые последующие 72 пикселя
         # начальное количество пользователей в поле основные = 18
@@ -240,15 +226,17 @@ class InstagramBot():
                 values(nickname=nickname).
                 returning(TestNicknameModel.id)
         )
-        id = self.session.execute(insert_stmt).scalar()
-        return id
+        db_user_id = self.session.execute(insert_stmt).scalar()
+        return db_user_id
 
     def send_customer_his_nomerok(self, nomerok):
         text_box = self.browser.find_element_by_xpath(
-            '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[2]/textarea')
+            '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[2]/textarea'
+        )
         text_box.clear()
         text_box.send_keys(f'Ваш номерок {nomerok}!\n'
                            f'Удачи:)')
         send_button = self.browser.find_element_by_xpath(
-            '/html/body/div[1]/div/div/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/button')
+            '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/button'
+        )
         send_button.click()

@@ -6,7 +6,7 @@ from config import USERNAME_MART, PASSWORD_MART, DB_USER, DB_PASSWORD, DB_HOST, 
 
 
 def create_session():
-    engine = create_engine(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}", echo=True)
+    engine = create_engine(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}")
     session = Session(engine)
     return session
 
@@ -18,8 +18,8 @@ bot.login()
 # проверяем запросы от новых пользователей
 # bot.check_requests()
 # проверяем папку основные
-# bot.check_dms(300, 'main')
+bot.check_dms(35, 'main')
 # проверяем папку общее
 # bot.check_dms(5, 'general')
-# закрываем браузер
-# bot.close_browser()
+# закрываем браузер1
+bot.close_browser()

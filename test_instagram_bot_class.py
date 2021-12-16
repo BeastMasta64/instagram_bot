@@ -19,7 +19,7 @@ class InstagramBot():
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36"
         self.options = webdriver.ChromeOptions()
         # опция headless включает режим без отображения окна браузера
-        self.options.headless = True
+        self.options.headless = False
         self.options.add_argument(f'user-agent={user_agent}')
         self.options.add_argument("--window-size=1920,1080")
         self.options.add_argument('--ignore-certificate-errors')
@@ -71,7 +71,7 @@ class InstagramBot():
                 # есть элеменент-картинка в сообщении
                 message.find_element_by_xpath('.//button/div/div/div/img')
                 return True
-            except NoSuchElementException:
+            except:
                 continue
         return False
 
@@ -153,20 +153,36 @@ class InstagramBot():
         for user_index in range(1, quantity + 1):
             print(f'\nПроверяю {user_index} клиента.')
 
+            # if user_index == 27:
+            #     self.browser.refresh()
+            #     sleep(2)
+
             # скроллим ленту сообщений от пользователей
             self.scroll_dm_field_to_user(user_index=user_index)
+            if user_index > 26:
+                user_index = 26
 
-            # после 28 человека - порядковый номер диалога в хтмл коде не изменяется и равен 28
-            if user_index > 28:
-                user_index = 28
-
-            # переменная под всех пользователей, которых видит бот
-            users = self.browser.find_elements_by_xpath(
-                '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div'
+            user = self.browser.find_element_by_xpath(
+                f'/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div[{user_index}]'
             )
-            # выбираем i-того пользователя
-            users[user_index - 1].click()
-            sleep(2)
+            user.click()
+            sleep(1)
+
+            # # после 28 человека - порядковый номер диалога в хтмл коде не изменяется и равен 28
+            # if user_index > 28:
+            #     user_index = 28
+            #
+            # # переменная под всех пользователей, которых видит бот
+            # users = self.browser.find_elements_by_xpath(
+            #     '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div[1]'
+            #     '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div[26]'
+            #     '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div[26]'
+            #     '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div[10]'
+            #     '/html/body/div[1]/section/div/div[2]/div/div/div[1]/div[3]/div/div/div/div/div'
+            # )
+            # # выбираем i-того пользователя
+            # users[user_index - 1].click()
+            # sleep(2)
 
             # смотрим имя пользователя
             user_nickname = self.browser.find_element_by_xpath(

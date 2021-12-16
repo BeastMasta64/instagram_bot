@@ -15,5 +15,5 @@ DB_HOST = str(os.getenv("DB_HOST"))
 DB_PORT = str(os.getenv("DB_PORT"))
 DB_DATABASE = str(os.getenv("DB_DATABASE"))
 
-CHROMEDRIVER_PATH = 'chromedriver/chromedriver'
+CHROMEDRIVER_PATH = './chromedriver/chromedriver'
 OPERADRIVER_PATH = './operadriver/operadriver.exe'

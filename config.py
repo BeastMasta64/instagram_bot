@@ -15,5 +15,7 @@ DB_HOST = str(os.getenv("DB_HOST"))
 DB_PORT = str(os.getenv("DB_PORT"))
 DB_DATABASE = str(os.getenv("DB_DATABASE"))
 
-CHROMEDRIVER_PATH = './chromedriver/chromedriver'
+project_path = os.path.dirname(os.path.abspath(__file__))
+
+CHROMEDRIVER_PATH = os.path.join(project_path, 'chromedriver/chromedriver')
 OPERADRIVER_PATH = './operadriver/operadriver.exe'

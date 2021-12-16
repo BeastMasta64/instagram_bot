@@ -18,8 +18,8 @@ bot.login()
 # проверяем запросы от новых пользователей
 # bot.check_requests()
 # проверяем папку основные
-# bot.check_dms(300, 1)
+# bot.check_dms(300, 'main')
 # проверяем папку общее
-# bot.check_dms(5, 2)
+# bot.check_dms(5, 'general')
 # закрываем браузер
 # bot.close_browser()

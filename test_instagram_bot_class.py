@@ -6,7 +6,7 @@ from sqlalchemy import insert
 from sqlalchemy.orm import session
 
 from config import CHROMEDRIVER_PATH
-from models import TestNicknameModel
+from models import TestNicknameModel, NicknameModel
 
 
 class InstagramBot():
@@ -232,15 +232,15 @@ class InstagramBot():
             sleep(2)
 
     def check_if_user_exists_in_db(self, nickname):
-        nickname_model_id_q = self.session.query(TestNicknameModel.id).filter(TestNicknameModel.nickname == nickname)
+        nickname_model_id_q = self.session.query(NicknameModel.id).filter(NicknameModel.nickname == nickname)
         check = self.session.query(nickname_model_id_q.exists()).scalar()
         return check
 
     def insert_nickname_in_db_return_id(self, nickname):
         insert_stmt = (
-            insert(TestNicknameModel).
+            insert(NicknameModel).
                 values(nickname=nickname).
-                returning(TestNicknameModel.id)
+                returning(NicknameModel.id)
         )
         db_user_id = self.session.execute(insert_stmt).scalar()
         return db_user_id

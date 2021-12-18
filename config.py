@@ -8,6 +8,8 @@ USERNAME_KIR = str(os.getenv("USERNAME_KIR"))
 PASSWORD_KIR = str(os.getenv("PASSWORD_KIR"))
 USERNAME_MART = str(os.getenv("USERNAME_MART"))
 PASSWORD_MART = str(os.getenv("PASSWORD_MART"))
+USERNAME_DIAMETRO=str(os.getenv("USERNAME_DIAMETRO"))
+PASSWORD_DIAMETRO=str(os.getenv("PASSWORD_DIAMETRO"))
 
 DB_USER = str(os.getenv("DB_USER"))
 DB_PASSWORD = str(os.getenv("DB_PASSWORD"))

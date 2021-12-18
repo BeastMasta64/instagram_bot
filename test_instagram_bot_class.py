@@ -19,7 +19,7 @@ class InstagramBot():
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36"
         self.options = webdriver.ChromeOptions()
         # опция headless включает режим без отображения окна браузера
-        self.options.headless = True
+        self.options.headless = False
         self.options.add_argument(f'user-agent={user_agent}')
         self.options.add_argument("--window-size=1920,1080")
         self.options.add_argument('--ignore-certificate-errors')

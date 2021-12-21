@@ -206,9 +206,9 @@ class InstagramBot():
                       f'Rolling back the session')
                 self.session.rollback()
                 raise e
-            print(f'добавил юзера {user_nickname} с номерком {db_user_id}')
+            print(f'добавил юзера "{user_nickname}" с номерком {db_user_id}')
         else:
-            print(f'{user_nickname} - ему не надо')
+            print(f'"{user_nickname}" - ему не надо')
 
     def scroll_dm_field_to_user(self, user_index: int):
         # поле сообщений

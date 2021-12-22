@@ -19,7 +19,7 @@ bot.login()
 # проверяем запросы от новых пользователей
 bot.check_requests()
 # проверяем папку основные
-bot.check_dms(200, 'main')
+bot.check_dms(60, 'main')
 # # проверяем папку общее
 # bot.check_dms(5, 'general')
 # # закрываем браузер1

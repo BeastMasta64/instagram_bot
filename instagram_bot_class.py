@@ -278,6 +278,18 @@ class InstagramBot():
         button_next = self.browser.find_element_by_xpath('/html/body/div[6]/div/div/div[1]/div/div[2]/div/button')
         button_next.click()
         sleep(2)
+
+
+        try:
+            accept_button = '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[5]/button'
+            self.browser.find_element_by_xpath(accept_button)
+            accept_button_exists = True
+        except:
+            accept_button_exists = False
+        if accept_button_exists:
+            self.accept_request()
+            sleep(2)
+
         user_nickname = self.browser.find_element_by_xpath(
             '/html/body/div[1]/section/div/div[2]/div'
             '/div/div[2]/div[1]/div/div/div[2]/div/div[2]/button/div/div/div'

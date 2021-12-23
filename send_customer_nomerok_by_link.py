@@ -9,7 +9,8 @@ link = 'something'
 while link != 'g':
     link = input('Отправь мне ссылку на типа и я отправлю ему номерок.\n'
                  'Чтобы начать цикл по ссылкам, напиши "g":')
-    link_list.append(link)
+    if link != 'g':
+        link_list.append(link)
 
 def create_session():
     engine = create_engine(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}")

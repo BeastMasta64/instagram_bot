@@ -80,7 +80,9 @@ class InstagramBot():
             not_now_button = self.browser.find_element_by_xpath(
                 '//*[contains(text(), "Not Now")]')
             not_now_button.click()
+            print('Нажал на кнопку не сейчас')
         except NoSuchElementException:
+            print('Не смог нажать на кнопку не сейчас')
             pass
 
     # метод обработки запросов
@@ -258,11 +260,14 @@ class InstagramBot():
         send_button.click()
 
     def send_customer_his_nomerok_by_link(self, link):
+        self.browser.get('https://www.instagram.com/direct/inbox/')
+        sleep(4)
+        self.click_not_now_button()
+        sleep(4)
         self.browser.get('https://www.instagram.com/direct/inbox/new')
         sleep(4)
         self.click_not_now_button()
         sleep(4)
-
         user_find_field = self.browser.find_element_by_xpath('/html/body/div[6]/div/div/div[2]/div[1]/div/div[2]/input')
         user_find_field.clear()
         sleep(1)

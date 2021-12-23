@@ -206,7 +206,7 @@ class InstagramBot():
                       f'Rolling back the session')
                 self.session.rollback()
                 raise e
-            print(f'добавил юзера "{user_nickname}" с номерком {db_user_id}')
+            print(f'Добавил юзера "{user_nickname}" с номерком {db_user_id}')
         else:
             print(f'"{user_nickname}" - ему не надо')
 
@@ -256,3 +256,39 @@ class InstagramBot():
             '/html/body/div[1]/section/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/button'
         )
         send_button.click()
+
+    def send_customer_his_nomerok_by_link(self, link):
+        self.browser.get('https://www.instagram.com/direct/inbox/new')
+        sleep(4)
+        self.click_not_now_button()
+        sleep(4)
+
+        user_find_field = self.browser.find_element_by_xpath('/html/body/div[6]/div/div/div[2]/div[1]/div/div[2]/input')
+        user_find_field.clear()
+        sleep(1)
+        user_find_field.send_keys(self.parse_instagram_link_return_username(link=link))
+        sleep(1)
+        user_to_send_nomerok = self.browser.find_element_by_xpath('/html/body/div[6]/div/div/div[2]/div[2]/div[1]')
+        user_to_send_nomerok.click()
+        sleep(1)
+        button_next = self.browser.find_element_by_xpath('/html/body/div[6]/div/div/div[1]/div/div[2]/div/button')
+        button_next.click()
+        sleep(2)
+        user_nickname = self.browser.find_element_by_xpath(
+            '/html/body/div[1]/section/div/div[2]/div'
+            '/div/div[2]/div[1]/div/div/div[2]/div/div[2]/button/div/div/div'
+        ).text
+        db_user_id = self.insert_nickname_in_db_return_id(nickname=user_nickname)
+        self.send_customer_his_nomerok(nomerok=db_user_id)
+
+        self.session.commit()
+        print(f'Добавил юзера "{user_nickname}" с номерком {db_user_id}')
+
+
+
+    def parse_instagram_link_return_username(self, link):
+        from urllib.parse import urlparse
+
+        url = urlparse(link)
+        username = url.path[1:-1]
+        return username

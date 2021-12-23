@@ -271,7 +271,9 @@ class InstagramBot():
         user_find_field.clear()
         sleep(1)
         user_find_field.send_keys(self.parse_instagram_link_return_username(link=link))
-        sleep(1)
+
+        sleep(2)
+
         user_to_send_nomerok = self.browser.find_element_by_xpath('/html/body/div[6]/div/div/div[2]/div[2]/div[1]')
         user_to_send_nomerok.click()
         sleep(1)
